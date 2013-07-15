@@ -1,12 +1,8 @@
-#include <math.h>
-#include <string.h>
-
 #define MAXSIEVE 100000000
 #define MAXSIEVEHALF 50000000
 #define MAXSQRT 5000
 
 short a[50000000];
-
 int primes[6000000];
 
 void sieve(){
@@ -23,5 +19,6 @@ void sieve(){
 
 int main(){
     sieve();
-    printf("%d", primes[1000000]);
+    int i;
+    for(i=0;i<26;i++) printf("%d, ", primes[i]);
 }

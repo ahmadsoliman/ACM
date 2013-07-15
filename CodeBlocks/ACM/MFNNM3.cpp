@@ -89,78 +89,105 @@ static int lcp(int *H, int *I, char *s, int *A, int l) {
 	return max;
 }
 
+int mod(int a, int m){
+    while(a<0)a+=m;
+    return a%m;
+}
+
 int s[MAX], SA[MAX], SAA[MAX], SAB[MAX], LCP[MAX], I[MAX];
 int main() {
-        int n, m, nA, nB, i, j, k;
+    int n, m, nA, nB, i, j, k, maxLCP, iA, jB;
 
-        char a[MAX], b[MAX], e[MAX];
-        gets(a);
-        gets(b);
+    char a[MAX], b[MAX], e[MAX];
+    gets(a);
+    gets(b);
 
-        strcat(a,a);
-        strcat(b,b);
-        string aS(a);
-        string bS(b);
-        //bS = string(bS.rbegin(), bS.rend());
+    string aS(a);
+    nA = aS.size();
+    string bS(b);
+    nB = bS.size();
+    bS = string(bS.rbegin(), bS.rend());
 
-        str[0] = '\0';
-        strcat(str, a);
-        //strcat(str, a);
-        //strcat(str, "$");
-        //strcat(str, bS.c_str());
+    str[0] = '\0';
+    strcat(str, a);
+    strcat(str, a);
+    strcat(str, "$");
+    strcat(str, bS.c_str());
+    strcat(str, bS.c_str());
+    string sS(str);
 
-        m = -1;
-        for(i = 0; str[i]; i++) {
-            s[i] = str[i];
-            m = m > str[i]? m : str[i];
-        }
-        n = i;
-        for(i = n; i < n+3; i++) SA[i] = s[i] = 0;
-        suffixArray(s, SAA, n, m);
+    m = -1;
+    for(i = 0; str[i]; i++) {
+        s[i] = str[i];
+        m = m > str[i]? m : str[i];
+    }
+    n = i;
+    for(i = n; i < n+3; i++) SA[i] = s[i] = 0;
+    suffixArray(s, SA, n, m);
 
-        nA = n;
+    lcp(LCP, I, str, SA, n);
 
-        str[0] = '\0';
-        strcat(str, b);
-        //strcat(str, b);
-        m = -1;
-        for(i = 0; str[i]; i++) {
-            s[i] = str[i];
-            m = m > str[i]? m : str[i];
-        }
-        n = i;
-        for(i = n; i < n+3; i++) SA[i] = s[i] = 0;
-        suffixArray(s, SAB, n, m);
-
-        nB = n;
-
-//        lcp(LCP, I, str, SA, n);
-
-        //for(i = 0; i < nA; i++)  printf("%d %s\n", SAA[i], aS.substr(SAA[i]).c_str());
-        //for(i = 0; i < nB; i++)  printf("%d %s\n", SAB[i], bS.substr(SAB[i]).c_str());
-
-        int palin=0;
-        for(i=0; i<nA; i++){
-            for(j=0; j<nB; j++){
-                if(SAA[i]>=nA/2 || SAB[j]>=nB/2)continue;
-                string s = aS.substr(SAA[i], nA/2);
-                s += bS.substr(SAB[j], nB/2);
-                palin = 1;
-                for(k=0; k<s.size()/2; k++){
-                    if(s[k]!=s[s.size()-k-1]){
-                        palin=0;
-                        break;
+    maxLCP=-1;
+    iA = 10000000;
+    jB = -1;
+    for(i = 1; i < n; i++){
+        if(LCP[i]>maxLCP && LCP[i]<=nB){
+            if((SA[i-1]<2*nA && SA[i]>2*nA) || (SA[i-1]>2*nA && SA[i]<2*nA)){
+                if(LCP[i]==nB && (SA[i-1]<iA || SA[i]>jB)){
+                    maxLCP = LCP[i];
+                    iA = SA[i-1];
+                    jB = SA[i];
+                    if(SA[i-1]<2*nA && SA[i]>2*nA){
+                        iA = SA[i-1];
+                        jB = SA[i];
+                    }else{
+                        jB = SA[i-1];
+                        iA = SA[i];
                     }
                 }
-                if(palin){
+            }
+        }
+    }
+    if(maxLCP==-1){
+        printf("No\n");
+    }else{
+        if(iA<nA){
+            aS += aS;
+            string first = aS.substr(iA+nB, nA-nB);
+            int palin = 1;
+            for(k=0; k<first.size()/2; k++){
+                if(first[k]!=first[first.size()-k-1]){
+                    palin=0;
                     break;
                 }
             }
-            if(palin)break;
+            if(!palin){
+                printf("No\n");
+                return 0;
+            }
+            printf("1Yes\n%d %d\n", (iA+1)%nA, mod(jB-2*nA-nB, nB)+1);
+        }else{
+            aS += aS;
+            string first = aS.substr(iA+nB-nA, nA-nB);
+            int palin = 1;
+            for(k=0; k<first.size()/2; k++){
+                if(first[k]!=first[first.size()-k-1]){
+                    palin=0;
+                    break;
+                }
+            }
+            if(!palin){
+                printf("No\n");
+                return 0;
+            }
+            printf("2Yes\n%d %d\n", (iA+1)%nA, mod(jB-2*nA-nB, nB)+1);
         }
-        if(palin)printf("Yes\n%d %d\n", SAA[i]+1, SAB[j]+1);
-        else printf("No\n");
-        return 0;
+    }
+
+    //for(i = 0; i < nA; i++)  printf("%d %s\n", SAA[i], aS.substr(SAA[i]).c_str());
+    //for(i = 0; i < nB; i++)  printf("%d %s\n", SAB[i], bS.substr(SAB[i]).c_str());
+
+   return 0;
 }
 /*
 cdedab, bac

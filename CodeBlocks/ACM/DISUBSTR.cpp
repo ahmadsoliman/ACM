@@ -2,9 +2,10 @@
 #include <stdio.h>
 
 using namespace std;
-const int MAX = 100000;
+#define MAX 1005
 char str[MAX];
 int c[MAX];
+
 #define GetI() (SA12[t] < n0 ? SA12[t] * 3 + 1 : (SA12[t] - n0) * 3 + 2)
 inline bool leq(int a1, int a2, int b1, int b2) {
         return(a1 < b1 || (a1 == b1 && a2 <= b2));
@@ -66,37 +67,45 @@ void suffixArray(int* s, int* SA, int n, int K) {
                         if(p == n0) for(k++; t < n02; t++, k++) SA[k] = GetI();
                 }
         }
-        delete[] s12; delete[] SA12; delete[] SA0; delete[] s0;
+       delete[] s12; delete[] SA12; delete[] SA0; delete[] s0;
 }
 
-static int lcp(int *H, int *I, char *s, int *A, int l) {
+void lcp(int *H, int *I, char *s, int *A, int l) {
 	// build inverse suffix array I:
 	int i;
 	for (i = 0; i < l; i++) I[A[i]] = i;
 
 	// build LCP:
-	int h = 0, max=-1; H[0] = 0;
+	int h = 0, maxV=0; H[0] = 0;
 	for (int i = 0; i < l; i++) {
 	    if (I[i] != 0) {
-           while (s[i+h] == s[A[I[i]-1]+h]) h++;
-        	H[I[i]] = h--;
-            if(H[I[i]]>max)
-                  max = H[I[i]];
-        	if (h < 0) h = 0;
-         }
+            while (s[i+h] == s[A[I[i]-1]+h]) h++;
+            H[I[i]] = h--;
+            if (h < 0) h = 0;
+        }
     }
-	return max;
 }
 
 int s[MAX], SA[MAX], LCP[MAX], I[MAX];
+char a[MAX];
 
 int main() {
-    int t,n, m, i, j, countG;
-    char a[MAX];
-    scanf("%d", &t);
+    int t,n,nf, m, i, j;
+    long long countG;
+    gets(a);
+    sscanf(a, "%d", &t);
     while(t--){
-        scanf("%s", a);
+        memset(SA, 0, sizeof SA);
+        memset(c, 0, sizeof c);
+        memset(LCP, 0, sizeof LCP);
+        memset(s, 0, sizeof s);
+        memset(str, 0, sizeof str);
 
+        gets(a);
+        nf = strlen(a);
+        for(i=0; i<nf; i++){
+            if(a[i]>='A'&&a[i]<='Z') a[i] = a[i] - 'A' + 'a';
+        }
         str[0] = '\0';
         strcat(str, a);
 
@@ -107,8 +116,14 @@ int main() {
         }
         n = i;
         for(i = n; i < n+3; i++) SA[i] = s[i] = 0;
+
         suffixArray(s, SA, n, m);
-        lcp(LCP, I, str, SA, n);
+        //lcp(LCP, I, a, SA, nf);
+
+        for(i=0; i<n-1; i++){
+            LCP[i]=0;
+            for(j=0; j<n && a[SA[i]]==a[SA[i+1]]; j++) LCP[i]++;
+        }
 
         countG=0;
         for(i=0; i<n; i++){
@@ -117,7 +132,7 @@ int main() {
                 countG++;
             }
         }
-        printf("%d\n", countG);
+        printf("%ld\n", countG);
     }
     return 0;
 }

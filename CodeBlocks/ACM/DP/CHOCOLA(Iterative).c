@@ -10,22 +10,6 @@ int compare (const void * a, const void * b)
   return ( *(int*)b - *(int*)a );
 }
 
-int recur(int i, int j){
-    if(i==m && j==n)
-        return 0;
-
-    if(dp[i][j]!=-1)
-        return dp[i][j];
-
-    if(i==m)
-        return dp[i][j] = (m+1)*hCuts[j] + recur(i, j+1);
-
-    if(j==n)
-        return dp[i][j] = (n+1)*vCuts[i] + recur(i+1, j);
-
-    return dp[i][j] = min((i+1)*hCuts[j]+recur(i, j+1), (j+1)*vCuts[i]+recur(i+1, j));
-}
-
 int main(){
     int t, i, j;
     scanf("%d", &t);
@@ -38,19 +22,27 @@ int main(){
         for(i=0; i<n; i++)
             scanf("%d",&hCuts[i]);
 
-        memset(dp, -1, sizeof dp);
-
         qsort(vCuts, m, sizeof(int), compare);
         qsort(hCuts, n, sizeof(int), compare);
 
-        printf("%d\n", recur(0,0));
+        for(i=1; i<=m; i++)
+            dp[i][1] = dp[i-1][1] + vCuts[i];
 
-        for(i=m; i>=0; i--){
-            for(j=n; j>=0; j--){
-                printf("%d ", dp[i][j]);
+        for(i=1; i<=n; i++)
+            dp[1][i] = dp[1][i-1] + hCuts[i];
+
+        for(i=1; i<=m; i++){
+            for(j=1; j<=n; j++){
+                if(i==m)
+                    dp[i][j] = (i+1)*hCuts[j] + dp[i][j-1];
+                else if(j==n)
+                    dp[i][j] = (j+1)*vCuts[i] + dp[i-1][j];
+                else
+                    dp[i][j] = min((i+1)*hCuts[j]+dp[i][j+1], (j+1)*vCuts[i]+dp[i+1][j]);
             }
-            printf("\n");
         }
+
+        printf("%d\n", dp[m][n]);
     }
     return 0;
 }
