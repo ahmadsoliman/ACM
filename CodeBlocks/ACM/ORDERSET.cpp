@@ -80,7 +80,7 @@ int main(){
     set<int>::iterator itr=T.begin();
     while(itr!=T.end()){
         M[index]=*itr;
-        H.insert(make_pair(M[index], index));
+        H.insert(pair<int, int>(M[index], index));
         index++;
         itr++;
     }

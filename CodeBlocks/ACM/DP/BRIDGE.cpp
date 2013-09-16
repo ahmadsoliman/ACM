@@ -1,56 +1,63 @@
 #include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <set>
 
-typedef struct{
-    int x,y;
-}pair1;
+using namespace std;
 
-int compare (const void * a, const void * b) {
-  return ( (*(pair1*)a).y - (*(pair1*)b).y );
+typedef long long ll;
+typedef pair<int, int> ii;
+typedef vector<ii> vii;
+typedef vector<int> vi;
+
+#define INF 1000000000
+
+int LIS_Len(vi A){
+    int N = A.size(),i, c=0;
+    set<int> s;
+    set<int>::iterator k;
+    for (i=0;i<N;i++) {
+        if (s.insert(A[i]).second) {
+            k = s.find(A[i]);
+            k++;
+            if (k!=s.end())
+                s.erase(k);
+        } /*else{
+            k = s.find(A[i]);
+            k++;
+            c++;
+            if (k!=s.end())
+                s.erase(k);
+        }*/
+    }
+    return s.size()+c;
 }
+/*
 
-int binarySearch(int a[], int low, int high, int target) {
-    if (high < low)
-        return -1;
-    int middle = (low + high)/2;
-    if (target < a[middle])
-        return binary_search(a, low, middle-1, target);
-    else if (target > a[middle])
-        return binary_search(a, middle+1, high, target);
-    else if (target == a[middle])
-        return middle;
-}
+1 2 3 4 5 6 7 8 9 10 11 12 13 14
+7 8 7 8 9 2 1 8 7 9 9 10 10 9
 
-int n, dp[1001], c[1001];
-pair1 pairs[1001];
+*/
+
+vii ps;
+vi ys;
 
 int main(){
-    int t,i,j,v,sz;
+    int t, n, i,j, x,y;
     scanf("%d", &t);
     while(t--){
         scanf("%d", &n);
-        for(i=0; i<n; i++) { scanf("%d", &v); pair1 tmp; tmp.x=v; pairs[i]=tmp;}
-        for(i=0; i<n; i++) { scanf("%d", &v); pairs[i].y=v;}
-        qsort(pairs, n, sizeof(pair1), compare);
+        ps.clear();
+        for(i=0; i<n; i++){ scanf("%d", &x); ps.push_back(ii(x,-1)); }
+        for(i=0; i<n; i++){ scanf("%d", &x); ps[i].second=x; }
 
-        sz = 1;
-        c[1] = pairs[0].x;
-        dp[0] = 1;
-        for( int i = 1; i < n; i++) {
-           if(pairs[i].x < c[1] ) {
-              c[1] = pairs[i].x; /*you have to update the minimum value right now*/
-              dp[i] = 1;
-           } else if(pairs[i].x > c[sz]) {
-              c[sz+1] = pairs[i].x;
-              dp[i] = sz+1;
-              sz++;
-           } else {
-              int k = binary_search(c, c+sz, pairs[i].x, myfunction); /*you want to find k so that c[k-1]<array[i]<c[k]*/
-              c[k] = pairs[i].x;
-              dp[i] = k;
-           }
-        }
-
-        printf("%d\n", dp[n-1]);
+        sort(ps.begin(), ps.end());
+        ys.clear();
+        for(i=0; i<n; i++) ys.push_back(ps[i].second);
+        printf("%d\n", LIS_Len(ys));
     }
     return 0;
 }

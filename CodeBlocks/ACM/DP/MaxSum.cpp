@@ -1,5 +1,5 @@
 #include <stdio.h>
-//c
+/*c*/
 
 int arr[105][105];
 int dp[105][105];

@@ -1,10 +1,9 @@
 #include <cstdio>
 #include <cstring>
-#include <algorithm>
 
 using namespace std;
-const int MAX = 201000;
-char str[MAX];
+const int MAX = 2000100;
+char str[MAX],c1;
 int c[MAX];
 #define GetI() (SA12[t] < n0 ? SA12[t] * 3 + 1 : (SA12[t] - n0) * 3 + 2)
 inline bool leq(int a1, int a2, int b1, int b2) {
@@ -67,78 +66,48 @@ void suffixArray(int* s, int* SA, int n, int K) {
                         if(p == n0) for(k++; t < n02; t++, k++) SA[k] = GetI();
                 }
         }
-        //delete[] s12; delete[] SA12; delete[] SA0; delete[] s0;
+        delete[] s12; delete[] SA12; delete[] SA0; delete[] s0;
 }
 
-static int lcp(int *H, int *I, char *s, int *A, int l) {
-	// build inverse suffix array I:
-	int i;
-	for (i = 0; i < l; i++) I[A[i]] = i;
-
-	// build LCP:
-	int h = 0, max=-1; H[0] = 0;
-	for (int i = 0; i < l; i++) {
-	    if (I[i] != 0) {
-           while (s[i+h] == s[A[I[i]-1]+h]) h++;
-        	H[I[i]] = h--;
-            if(H[I[i]]>max)
-                  max = H[I[i]];
-        	if (h < 0) h = 0;
-         }
-    }
-	return max;
-}
-
-int s[MAX], SA[MAX], LCP[MAX], I[MAX];
+int s[MAX], SA[MAX];
+int n, m, i,allsame;
 
 int main() {
-        int n, m, i, same=1, ans;
+    gets(str);
+    m = (int)strlen(str);
 
-        char a[MAX];
-        gets(a);
-        n = strlen(a);
-        if(n==0){
-            printf("0\n");
-            return 0;
+    c1=str[0];
+    allsame=1;
+    for(i=1; i<m; i++){
+        if(c1!=str[i]){
+            allsame=0;
+            break;
         }
-
-        m = -1;
-        s[0] = '\0';
-        m = m > '\0'? m : '\0';
-        for(i = 1; i<=n; i++) {
-            s[i]=a[i-1];
-            m = m > s[i]? m : s[i];
-        }
-        for(i = 0; i<n; i++) {
-            s[i+n]=a[i];
-            m = m > s[i]? m : s[i];
-        }
-
-        for(i = n; i < n+3; i++) SA[i] = s[i] = 0;
-        suffixArray(s, SA, n, m);
-        lcp(LCP, I, str, SA, n);
-
-        int suffixsize, ExpectedIdx,ExpectedSuffixNumber,ExpectedSuffixLength;
-        for(int i=0;i<n;i++){
-            suffixsize=n-SA[i];
-            if(suffixsize>(n/2)){
-                ExpectedIdx=SA[i];
-                ExpectedSuffixNumber=i;
-                ExpectedSuffixLength=suffixsize;
-                break;
-            }
-        }
-        int finalans=ExpectedIdx;
-        for(int i=(ExpectedSuffixNumber+1);i<n;i++){
-            if(LCP[i]>n/2){
-                if(SA[i]<finalans)
-                {
-                    finalans=SA[i];
-                }
-            }
-            else
-                break;
-        }
-        printf("%d\n", finalans);
+    }
+    if(allsame) {
+        printf("0\n");
         return 0;
+    }
+
+    strncpy(str+m, str, m);
+    strcat(str, "~");
+
+    m = -1;
+    for(i = 0; str[i]; i++) {
+        s[i] = str[i];
+        m = m > str[i]? m : str[i];
+    }
+    n = i;
+    for(i = n; i < n+3; i++) SA[i] = s[i] = 0;
+    suffixArray(s, SA, n, m);
+
+
+    for(i=0; i<n; i++){
+        if(SA[i]<n/2){
+            printf("%d\n", SA[i]);
+            break;
+        }
+    }
+    return 0;
 }
+

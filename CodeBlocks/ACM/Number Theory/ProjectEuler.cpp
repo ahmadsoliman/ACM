@@ -7,6 +7,19 @@
 
 using namespace std;
 
+// calculates (a*b)%c taking into account that a*b might overflow
+long long mulmod(long long a,long long b,long long c){
+    long long x=0; y=a%c;
+    while(b){
+        if(b&1) x += y;
+        if(x>=MOD) x-=MOD;
+        y <<= 1;
+        if(y>=MOD) y-=MOD;
+        b >>= 1;
+    }
+    return x;
+}
+
 long long powmod1(int x, int pow, int m){
     if(pow==1)return x;
     long long halfpow = powmod1(x,pow/2,m);
@@ -252,7 +265,7 @@ void eGCD(long long res[], long long m, long long n){
 }
 
 //Chinese Remainder Theorem , congruences[i][0] = ai & congruences[i][1] = ni
-long long congruences[2][2];
+long long congruences[3][2];
 long long CRT(int len){
     //check all n are co-prime
 
@@ -288,6 +301,9 @@ long long phi(long long n){
     return phiN;
 }
 int main(){
-    printf("%d\n", prob17());
+    congruences[0][0]=0;congruences[0][1]=12;
+    congruences[1][0]=0;congruences[1][1]=21;
+    congruences[2][0]=0;congruences[2][1]=28;
+    printf("%d", CRT(3));
     return 0;
 }
