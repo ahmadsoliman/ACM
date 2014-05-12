@@ -1,8 +1,7 @@
 #include <stdio.h>
+#include <math.h>
 
 int dp[10001][10001];
-
-
 
 int main(void){
     int m, n, t, i ,j, N, found, foundMax, notFoundMax, notFoundTime;
@@ -31,9 +30,7 @@ int main(void){
                     notFoundTime=dp[i][j];
                     notFoundMax=i+j;
                 }
-               // printf("%d ",dp[i][j]);
             }
-            //printf("\n");
         }
         if(found>0){
             printf("%d\n",foundMax);

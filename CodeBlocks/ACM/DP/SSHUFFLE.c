@@ -8,11 +8,11 @@ long long dp[62][62][62];
 long long recur(int i, int j, int k){
     if(k==nc) return 1;
     if(i==na && j==nb) return 0;
-    int cnt=0;
+    long long cnt=0;
     if(i<na && a[i]==c[k]) cnt+=recur(i+1, j, k+1);
+    //if(i<na) cnt+=recur(i+1, j, k);
     if(j<nb && b[j]==c[k]) cnt+=recur(i, j+1, k+1);
-    if(i<na && a[i]!=c[k]) cnt+=recur(i+1, j, k);
-    if(j<nb && b[i]!=c[k]) cnt+=recur(i, j+1, k);
+    if(i<na && j<nb) cnt+=recur(i+1, j+1, k);
     return cnt;
 }
 

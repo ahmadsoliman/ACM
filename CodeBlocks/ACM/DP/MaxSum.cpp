@@ -4,6 +4,28 @@
 int arr[105][105];
 int dp[105][105];
 
+
+#define MIN -2000000000
+int columnSum[105];
+int kadane2D(int R, int C){
+    int s=MIN,S=MIN,t, row, x, i;
+    for(row = 0; row<R; row++) {
+        for(i=0; i<C; i++) columnSum[i] = 0;
+        for(x = row; x<R; x++) {
+            s = MIN;
+            t = 0;
+            for(i=0; i<C; i++) {
+                columnSum[i]+=arr[x][i];
+                t+=columnSum[i];
+                if(t>s) s = t;
+                if(t<0) t = 0;
+            }
+            if(s>S) S = s;
+        }
+    }
+    return S;
+}
+
 int main(){
     int N, i , j, k ,l, up, left, corner, maxSum, sum;
 
@@ -13,7 +35,7 @@ int main(){
             scanf("%d", &arr[i][j]);
         }
     }
-
+/*
     for(i=0; i<N; i++){
         for(j=0; j<N; j++){
             up=0;left=0;corner=0;
@@ -27,9 +49,9 @@ int main(){
             dp[i][j] = arr[i][j] + up+left-corner;
         }
     }
-
-    maxSum=0;
-    for(i=0; i<N; i++){
+*/
+    maxSum=kadane2D(N, N);
+/*    for(i=0; i<N; i++){
         for(j=-1; j<i; j++){
             for(k=0; k<N; k++){
                 for(l=-1; l<k; l++){
@@ -40,7 +62,7 @@ int main(){
             }
         }
     }
-    printf("%d\n", maxSum);
+  */  printf("%d\n", maxSum);
     return 0;
 }
 /*

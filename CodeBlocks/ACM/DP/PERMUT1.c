@@ -1,3 +1,9 @@
+/*
+
+Let A = [a1,a2,...,an] be a permutation of integers 1,2,...,n. A pair of indices (i,j), 1<=i<=j<=n, is an inversion of the permutation A if ai>aj. We are given integers n>0 and k>=0. What is the number of n-element permutations containing exactly k inversions?
+
+*/
+
 #include <stdio.h>
 #include <string.h>
 
@@ -25,3 +31,5 @@ int main(){
     }
     return 0;
 }
+
+

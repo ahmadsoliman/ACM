@@ -1,3 +1,8 @@
+/*
+A partition of positive integer m into n components is any sequence a1,...,an of positive integers such that a1+...+an=m and a1<=a2<=...<=an. Your task is to determine the partition, which occupies the k-th position in the lexicographic order of all partitions of m into n components.
+*/
+
+
 #include <stdio.h>
 
 int t, m, n,k, i,j, cur, sum, temp,p, dp[222][11];

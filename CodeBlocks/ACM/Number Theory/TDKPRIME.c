@@ -21,7 +21,7 @@ void sieve(){
             for(j=2*i*i+i+i;j<MAXSIEVEHALF;j+=i+i+1)
                 a[j>>3]&=~(1<<(j&7));
         }
-    for(; i<MAXSIEVEHALF; i++)if(a[i>>3]&(1<<(i&7)))primes[k++]=i+i+1;
+    for(; i<MAXSIEVEHALF; i++) if(a[i>>3]&(1<<(i&7))) primes[k++]=i+i+1;
 }
 
 int main(){
