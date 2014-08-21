@@ -10,64 +10,52 @@
 
 #define INF 1000000000
 
+#define pb push_back
+
 using namespace std;
 
-int dp[7][1000002], sumHigh[200], sumLow[200];
+typedef long long ll;
+typedef pair<int, int> ii;
+typedef pair<int, ii> iii;
+typedef pair<ii, ii> iiii;
+typedef pair<double, int> di;
+typedef vector<int> vi;
+typedef vector<di> vdi;
+typedef vector<vi> vvi;
+typedef vector<ii> vii;
+typedef vector<vii> vvii;
 
-int recur(int c, int last){
-    if(dp[last][c]!=-1) return dp[last][c];
+int dp[1000020], sumHigh[200], sumLow[200];
 
-    if(c==0) return dp[last][c]=0;
+int recur(int c){
+    if(c==0) return dp[c]=0;
+    //if(c<sumHigh[2]&&c<sumLow[3]) return INF;
+    if(dp[c]!=-1) return dp[c];
 
-    int minv=INF, v;
-    for(int i=last-1; i>1; i--){
-        if(sumHigh[i]<=c) {
-            v = recur(c-sumHigh[i], i);
-            if(v!=INF) {
-                minv=min(minv, 1+v);
-            }
-        }
-        if(sumLow[i]<=c && i>2) {
-            v = recur(c-sumLow[i], i);
-            if(v!=INF) {
-                minv=min(minv, 1+v);
-            }
-        }
+    int minv=INF;
+    for(int i=181; i>1; i--){
+        if(sumHigh[i]<=c) minv = min(minv, 1+recur(c-sumHigh[i]));
+        if(i>2 && sumLow[i]<=c) minv = min(minv, 1+recur(c-sumLow[i]));
     }
-    return dp[last][c]=minv;
+    return dp[c]=minv;
 }
 
-void recons(int c, int last){
-    if(c==0) return;
+char tmp[100];
+vector<iii> sums;
+string finans;
 
-    int minv=INF, v, base, left;
-    bool up;
-    for(int i=last-1; i>1; i--){
-        if(sumHigh[i]<=c) {
-            v = dp[i][c-sumHigh[i]];
-            if(v!=INF) {
-                if(1+v<minv){
-                    up=true;
-                    base=i;
-                    left = c-sumHigh[i];
-                }
-                minv=min(minv, 1+v);
-            }
-        }
-        if(sumLow[i]<=c && i>2) {
-            v = dp[i][c-sumLow[i]];
-            if(v!=INF) {
-                if(1+v<minv){
-                    up=false;
-                    base=i;
-                    left = c-sumLow[i];
-                }
-                minv=min(minv, 1+v);
-            }
+void recons(int c, int i, int res, string ans){
+    if(c==0) {
+        if(finans.size()) return;
+        finans=ans;
+    }
+    for(; i<sums.size(); i++){
+        if(c>=sums[i].first && dp[c-sums[i].first]<=res){
+            sprintf(tmp, " %d%c", sums[i].second.first, (sums[i].second.second)?'H':'L');
+            recons(c-sums[i].first, i+1, res-1, ans+tmp);
+            if(finans.size()) return;
         }
     }
-    printf(" %d%c", base, ((up)?'H':'L'));
-    recons(left, base);
 }
 
 int main(){
@@ -78,17 +66,25 @@ int main(){
     for(int i=2; i<182; i++){
         sumHigh[i]=sumHigh[i-1]+i*i;
         sumLow[i]=sumLow[i-2]+i*i;
+        sums.pb(iii(sumHigh[i], ii(i, 1)));
+        if(i>2) sums.pb(iii(sumLow[i], ii(i, 0)));
     }
+    sort(sums.rbegin(), sums.rend());
     memset(dp, -1, sizeof dp);
-
     int c, kase=1;
     while(scanf("%d", &c)){
         if(!c) break;
-        if(recur(c, 183)==INF) printf("Case %d: impossible\n", kase++);
+        int res = recur(c);
+        if(c>=INF) printf("Case %d: impossible\n", kase++);
         else {
             printf("Case %d:", kase++);
-            recons(c, 183);
-            printf("\n");
+            finans="";
+
+            while(finans.size()==0 && res<8)
+                recons(c, 0, res-1, ""), res++;
+
+            if(finans.size()) printf("%s\n", finans.c_str());
+            else printf(" impossible\n");
         }
     }
     return 0;
